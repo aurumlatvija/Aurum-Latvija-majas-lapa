@@ -2,8 +2,46 @@
 <html lang="lv">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aurum Latvija</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
 </head>
-<body>
-    </body>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <main class="flex-grow flex flex-col items-center justify-center px-4 py-16 text-center max-w-xl mx-auto">
+        
+        <div class="w-32 h-32 mb-8 bg-slate-900 rounded-full flex items-center justify-center shadow-lg text-amber-400 font-bold text-2xl tracking-wider">
+            AURUM
+        </div>
+
+        <h1 class="text-4xl font-bold tracking-tight text-slate-900 mb-4 sm:text-5xl">
+            Aurum Latvija
+        </h1>
+
+        <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+            Laipni lūgti mūsu vietnē. Šeit drīzumā būs pieejama plašāka informācija par mūsu projektiem un pakalpojumiem.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+            <a href="/noteikumi/" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-6 py-3 rounded-lg shadowtransition-all duration-200">
+                Lietošanas noteikumi
+            </a>
+            <a href="mailto:info@aurumlatvija.lv" class="bg-white hover:bg-slate-100 text-slate-900 font-semibold px-6 py-3 rounded-lg border border-slate-200 shadow-sm transition-all duration-200">
+                Sazināties ar mums
+            </a>
+        </div>
+
+    </main>
+
+    <footer class="py-6 border-t border-slate-200 text-center text-sm text-slate-400">
+        <p>&copy; 2026 Aurum Latvija. Visas tiesības aizsargātas.</p>
+    </footer>
+
+</body>
 </html>
