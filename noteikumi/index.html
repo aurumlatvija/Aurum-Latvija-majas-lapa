@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Aurum Latvija — Jaunā biedra ceļvedis</title>
+<title>Aurum Latvija — Jaunā biedra ceļvedis (v2.7)</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
 
@@ -1686,6 +1686,105 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 /* ═══════════════════════════════════════
+   REGISTRATION MODAL + REGISTRY PANEL
+═══════════════════════════════════════ */
+.reg-modal, .reg-panel {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26,26,26,0.55);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.reg-modal.active { display: flex; }
+
+.reg-modal-card {
+  background: white;
+  border-radius: 16px;
+  padding: 28px 24px 24px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+}
+.reg-modal-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 22px;
+  color: var(--dark);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.reg-modal-sub {
+  font-size: 13.5px;
+  color: var(--mid);
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+.reg-form label {
+  display: block;
+  margin-bottom: 14px;
+}
+.reg-form label > span {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--bronze);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.reg-form input {
+  width: 100%;
+  padding: 11px 12px;
+  font-size: 15px;
+  border: 1.5px solid #e5e0d6;
+  border-radius: 8px;
+  font-family: inherit;
+  color: var(--dark);
+  background: white;
+  -webkit-appearance: none;
+}
+.reg-form input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.reg-err {
+  color: #c44;
+  font-size: 12.5px;
+  margin: 4px 0 8px;
+  min-height: 16px;
+  line-height: 1.4;
+}
+.reg-submit {
+  display: block;
+  width: 100%;
+  background: var(--gold);
+  color: white;
+  border: none;
+  padding: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 8px;
+  font-family: 'Open Sans', sans-serif;
+  transition: opacity 0.2s, transform 0.15s;
+  margin-top: 4px;
+}
+.reg-submit:hover { opacity: 0.92; }
+.reg-submit:active { transform: scale(0.99); }
+
+.reg-disclaimer {
+  font-size: 11px;
+  color: var(--light);
+  text-align: center;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════
    FINAL
 ═══════════════════════════════════════ */
 #s-final {
@@ -1876,7 +1975,7 @@ input[type=range]::-webkit-slider-thumb {
         <p class="home-quote-inline">Ņem vērā — Aurumā palīdzību saņem tas, kurš jautā!</p>
         <p class="home-signature">Tavs Aurum</p>
       </div>
-      <button class="btn-start" onclick="goMap()">Sākt ceļu →</button>
+      <button class="btn-start" onclick="startJourney()">Sākt ceļu →</button>
     </div>
   </div>
 </div>
@@ -3267,8 +3366,119 @@ function resetQuizCh1() {
   if (result) { result.className = 'quiz-result'; result.innerHTML = ''; }
 }
 
+
+// ════════════════════════════════════════════════════════
+// REMOTE REGISTRY — Google Apps Script Web App URL
+// Data lives in Google Sheets; this is the only place it's stored.
+// ════════════════════════════════════════════════════════
+const REMOTE_REGISTRY_URL = 'https://script.google.com/macros/s/AKfycbzu4iytnGprfqH0Y9iCbugFTDWBONfFZLj-xd0LVfWvbm7vwWbE-m_QrYZsTWGYZtdZew/exec';
+
+function postToRemote(payload) {
+  if (!REMOTE_REGISTRY_URL) return;
+  try {
+    fetch(REMOTE_REGISTRY_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).catch(function(){ /* silent */ });
+  } catch (e) { /* silent */ }
+}
+
+// ─── REGISTRATION (Google Sheets only; localStorage only remembers "already registered" on this device) ──
+let AURUM_USER = null;
+try {
+  const u = localStorage.getItem('aurum_user');
+  if (u) AURUM_USER = JSON.parse(u);
+} catch(e) { AURUM_USER = null; }
+// Clean up legacy local registry from older versions
+try { localStorage.removeItem('aurum_registry'); } catch(e){}
+
+function saveAurumUser(u) {
+  AURUM_USER = u;
+  try { localStorage.setItem('aurum_user', JSON.stringify(u)); } catch(e){}
+}
+
+function nowLV() {
+  const d = new Date();
+  const date = d.toLocaleDateString('lv-LV');
+  const time = d.toLocaleTimeString('lv-LV', {hour: '2-digit', minute: '2-digit'});
+  return date + ' ' + time;
+}
+
+function startJourney() {
+  if (AURUM_USER && AURUM_USER.epasts) {
+    goMap();
+  } else {
+    showRegistrationModal();
+  }
+}
+
+function showRegistrationModal() {
+  const m = document.getElementById('reg-modal');
+  if (m) {
+    m.classList.add('active');
+    setTimeout(() => { const f = document.getElementById('reg-vards'); if (f) f.focus(); }, 100);
+  }
+}
+
+function closeRegistrationModal() {
+  const m = document.getElementById('reg-modal');
+  if (m) m.classList.remove('active');
+}
+
+function submitRegistration(ev) {
+  if (ev) ev.preventDefault();
+  const vards = (document.getElementById('reg-vards').value || '').trim();
+  const uzvards = (document.getElementById('reg-uzvards').value || '').trim();
+  const epasts = (document.getElementById('reg-epasts').value || '').trim().toLowerCase();
+  const errEl = document.getElementById('reg-err');
+  if (!vards || !uzvards || !epasts) {
+    errEl.textContent = 'Lūdzu, aizpildi visus laukus.';
+    return false;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epasts)) {
+    errEl.textContent = 'Lūdzu, ievadi derīgu e-pasta adresi.';
+    return false;
+  }
+  errEl.textContent = '';
+  const registered = nowLV();
+  saveAurumUser({ vards, uzvards, epasts, registered });
+  postToRemote({
+    event: 'register',
+    vards: vards,
+    uzvards: uzvards,
+    epasts: epasts,
+    timestamp: registered
+  });
+  closeRegistrationModal();
+  goMap();
+  return false;
+}
+
+function markUserCompleted() {
+  if (!AURUM_USER || !AURUM_USER.epasts) return;
+  if (AURUM_USER.completedSent) return; // skip duplicate POSTs
+  const completed = nowLV();
+  const pct = (typeof calcPct === 'function') ? calcPct() : 0;
+  AURUM_USER.completed = completed;
+  AURUM_USER.percentage = pct;
+  AURUM_USER.completedSent = true;
+  try { localStorage.setItem('aurum_user', JSON.stringify(AURUM_USER)); } catch(e){}
+  postToRemote({
+    event: 'complete',
+    vards: AURUM_USER.vards,
+    uzvards: AURUM_USER.uzvards,
+    epasts: AURUM_USER.epasts,
+    registered: AURUM_USER.registered || '',
+    timestamp: completed,
+    percentage: pct
+  });
+}
+
 // ─── FINAL ──────────────────────────────────────────────
 function showFinal() {
+  markUserCompleted();
   const pct = calcPct();
   show('s-final');
   const done = ST.done.filter(Boolean).length;
@@ -3345,5 +3555,31 @@ const observer = new MutationObserver(() => {
 });
 observer.observe(document.getElementById('ch-content'), { childList: true });
 </script>
+
+<!-- ══ REGISTRATION MODAL ══ -->
+<div id="reg-modal" class="reg-modal">
+  <div class="reg-modal-card">
+    <div class="reg-modal-title">Pirms sāc ceļu</div>
+    <div class="reg-modal-sub">Lūdzu, iepazīstini sevi — tā Aurum vadība var redzēt, kurš jau ir izgājis rokasgrāmatu.</div>
+    <form onsubmit="return submitRegistration(event)" class="reg-form" autocomplete="on">
+      <label>
+        <span>Vārds</span>
+        <input type="text" id="reg-vards" required autocomplete="given-name">
+      </label>
+      <label>
+        <span>Uzvārds</span>
+        <input type="text" id="reg-uzvards" required autocomplete="family-name">
+      </label>
+      <label>
+        <span>E-pasts</span>
+        <input type="email" id="reg-epasts" required autocomplete="email">
+      </label>
+      <div id="reg-err" class="reg-err"></div>
+      <button type="submit" class="reg-submit">Turpināt →</button>
+    </form>
+    <div class="reg-disclaimer">Reģistrācija tiek prasīta vienreiz uz šīs ierīces.</div>
+  </div>
+</div>
+
 </body>
 </html>
