@@ -2,8 +2,31 @@
 <html lang="lv">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Aurum Latvija — Jaunā biedra ceļvedis (v2.7)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Aurum biedra rokasgrāmata — Aurum Latvija</title>
+
+<!-- Identitāte un meklētājprogrammām -->
+<meta name="description" content="Aurum Latvija biedrības jaunā biedra vadlīnijas un ceļvedis. Iekšēja informatīva lietotne biedrības biedriem.">
+<meta name="author" content="Aurum Latvija">
+<meta name="keywords" content="Aurum Latvija, biedrība, uzņēmēji, biedra rokasgrāmata">
+<link rel="canonical" href="https://aurumlatvija.lv/noteikumi/">
+
+<!-- Open Graph (sociālie tīkli un drošības skenētāji) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Aurum Latvija">
+<meta property="og:title" content="Aurum biedra rokasgrāmata">
+<meta property="og:description" content="Aurum Latvija biedrības jaunā biedra vadlīnijas un ceļvedis.">
+<meta property="og:url" content="https://aurumlatvija.lv/noteikumi/">
+<meta property="og:image" content="https://aurumlatvija.lv/noteikumi/icon-512.png">
+<meta property="og:locale" content="lv_LV">
+
+<!-- Tema krāsa un mobilā uzvedība -->
+<meta name="theme-color" content="#D99B29">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Aurum">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
 
@@ -129,6 +152,33 @@ body {
   transition: background 0.2s, transform 0.15s;
 }
 .btn-start:active { transform: scale(0.98); }
+
+.home-about {
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(217,155,41,0.15);
+  text-align: center;
+}
+.home-about-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--bronze);
+  margin-bottom: 8px;
+}
+.home-about-text {
+  font-size: 12.5px;
+  color: var(--mid);
+  line-height: 1.6;
+}
+.home-about-text strong { color: var(--dark); font-weight: 600; }
+.home-about-text a {
+  color: var(--bronze);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--bronze);
+}
+.home-about-text a:hover { color: var(--gold); border-bottom-color: var(--gold); }
 
 /* ═══════════════════════════════════════
    MAP
@@ -1718,9 +1768,19 @@ input[type=range]::-webkit-slider-thumb {
 .reg-modal-sub {
   font-size: 13.5px;
   color: var(--mid);
-  margin-bottom: 18px;
+  margin-bottom: 10px;
   line-height: 1.5;
 }
+.reg-modal-privacy {
+  font-size: 12px;
+  color: var(--light);
+  margin-bottom: 16px;
+  line-height: 1.5;
+  padding: 8px 10px;
+  background: rgba(217,155,41,0.06);
+  border-radius: 6px;
+}
+.reg-modal-privacy strong { color: var(--bronze); font-weight: 600; }
 .reg-form label {
   display: block;
   margin-bottom: 14px;
@@ -1976,6 +2036,12 @@ input[type=range]::-webkit-slider-thumb {
         <p class="home-signature">Tavs Aurum</p>
       </div>
       <button class="btn-start" onclick="startJourney()">Sākt ceļu →</button>
+      <div class="home-about">
+        <div class="home-about-title">Par šo lietotni</div>
+        <div class="home-about-text">
+          Šī ir <strong>Aurum Latvija</strong> biedrības jaunā biedra informatīvā lietotne. Sazinies: <a href="mailto:info@aurumlatvija.lv">info@aurumlatvija.lv</a> · <a href="https://aurumlatvija.lv" target="_blank" rel="noopener">aurumlatvija.lv</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -2823,9 +2889,9 @@ const CHAPTER_HTML = [
 
       <div class="section-title bronze">Uzņemšanas process</div>
       <ol class="flow-list">
-        <li>Kandidāts iesniedz <strong>motivācijas vēstuli</strong>.</li>
-        <li>Apliecina vēlmi iestāties, samaksājot <strong>biedru naudu</strong>.</li>
-        <li class="veto">Visi Aurum biedri <strong>balso</strong>. Katram ir <span class="hl-energy">VETO tiesības</span>.</li>
+        <li>Kandidāts iesniedz <strong>motivācijas vēstuli</strong> un <strong>iesniegumu par iestāšanos biedrībā</strong>.</li>
+        <li>Aurum valde <strong>rekomendē biedriem izskatīt</strong> jaunā biedra kandidatūru.</li>
+        <li class="veto">Aurum biedriem ir tiesības <strong>izteikt savu viedokli</strong> par kandidātu <strong>3 dienu laikā</strong>. Katram ir <span class="hl-energy">VETO tiesības</span>.</li>
         <li>Ja pirmie 3 nosacījumi piepildās, biedrs <strong>saņem rēķinu</strong>. Dalību biedrībā var uzsākt tikai <strong>pēc rēķina apmaksas</strong>.</li>
       </ol>
 
@@ -3561,6 +3627,7 @@ observer.observe(document.getElementById('ch-content'), { childList: true });
   <div class="reg-modal-card">
     <div class="reg-modal-title">Pirms sāc ceļu</div>
     <div class="reg-modal-sub">Lūdzu, iepazīstini sevi — tā Aurum vadība var redzēt, kurš jau ir izgājis rokasgrāmatu.</div>
+    <div class="reg-modal-privacy">Tavi dati (vārds, e-pasts) tiek glabāti tikai <strong>Aurum Latvija iekšējā reģistrā</strong> un netiks izmantoti reklāmas vai trešo pušu vajadzībām.</div>
     <form onsubmit="return submitRegistration(event)" class="reg-form" autocomplete="on">
       <label>
         <span>Vārds</span>
