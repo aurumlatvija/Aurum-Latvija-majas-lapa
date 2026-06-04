@@ -1,6 +1,0 @@
-# Aurum Latvija biedrības iekšējā lietotne — biedru rokasgrāmata
-User-agent: *
-Allow: /noteikumi/
-Disallow:
-
-Sitemap: https://aurumlatvija.lv/noteikumi/sitemap.xml
