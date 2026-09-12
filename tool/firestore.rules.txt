@@ -1,0 +1,48 @@
+// Firestore Security Rules for "Aurum Latvija Sapulce" networking page.
+//
+// Where to paste this: Firebase console -> your project -> Build -> Firestore
+// Database -> Rules tab -> replace everything with this text -> Publish.
+//
+// What it does: since the page has no login (people just click their own
+// name), there is no way to cryptographically verify who is writing. These
+// rules simply restrict writes to the shape of data this app actually uses
+// (the "requests" collection, with the expected fields), so a write can't
+// silently corrupt the collection or write arbitrary huge documents.
+// Anyone with the page's link can read and write meeting requests — that
+// matches the app's own trust model (a small, known group of event
+// attendees), but do not use this ruleset for anything sensitive.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /requests/{reqId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly(
+                        ['aId','bId','requestedBy','status','createdAt','messages']
+                      )
+                      && request.resource.data.status == 'pending'
+                      && request.resource.data.messages.size() == 0;
+
+      allow update: if request.resource.data.keys().hasOnly(
+                        ['aId','bId','requestedBy','status','createdAt','messages']
+                      )
+                      && request.resource.data.aId == resource.data.aId
+                      && request.resource.data.bId == resource.data.bId
+                      && request.resource.data.requestedBy == resource.data.requestedBy
+                      && request.resource.data.createdAt == resource.data.createdAt
+                      && (request.resource.data.status == 'pending' || request.resource.data.status == 'confirmed')
+                      && request.resource.data.messages.size() <= 200;
+
+      // A pending (not yet confirmed) request can be withdrawn by deleting
+      // it. Confirmed meetings can no longer be deleted this way.
+      allow delete: if resource.data.status == 'pending';
+    }
+
+    // Everything else stays closed by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
